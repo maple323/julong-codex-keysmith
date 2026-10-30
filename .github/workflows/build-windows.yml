@@ -28,8 +28,10 @@ jobs:
       - name: Copy resources into src-tauri
         run: npm run copy-resources
 
-      - name: Build NSIS + MSI
-        run: npm run build:win:bundle
+      - name: Build NSIS installer
+        run: |
+          node scripts/prepare-sidecar.mjs x86_64-pc-windows-msvc
+          npx tauri build --config src-tauri/tauri.sidecar.conf.json --target x86_64-pc-windows-msvc --bundles nsis
 
       - name: Collect artifacts
         uses: actions/upload-artifact@v4
