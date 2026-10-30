@@ -20,6 +20,9 @@ jobs:
       - name: Install npm deps
         run: npm ci
 
+      - name: Copy resources into src-tauri
+        run: npm run copy-resources
+
       - name: Build NSIS + MSI
         run: npm run build:win:bundle
 
