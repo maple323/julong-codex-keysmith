@@ -1,0 +1,36 @@
+name: build-windows
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install npm deps
+        run: npm ci
+
+      - name: Build NSIS + MSI
+        run: npm run build:win:bundle
+
+      - name: Collect artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: julong-windows
+          if-no-files-found: warn
+          retention-days: 7
+          path: |
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*.exe
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/*.msi
+            src-tauri/target/x86_64-pc-windows-msvc/release/julong-codex-keysmith.exe
+            src-tauri/binaries/*.exe
